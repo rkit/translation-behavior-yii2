@@ -107,9 +107,7 @@ class TranslationBehavior extends Behavior
     {
         $this->owner->populateRelation($this->relationMany, []);
 
-        $translationClass = $this->owner->getRelation($this->relationMany)->modelClass;
         $reflection = new \ReflectionClass($this->owner->getRelation($this->relationMany)->modelClass);
-
         foreach ($data[$reflection->getShortName()] as $language => $items) {
             foreach ($items as $attribute => $translation) {
                 $this->owner->translate($language)->$attribute = $translation;
