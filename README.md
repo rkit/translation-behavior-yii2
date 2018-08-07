@@ -15,7 +15,7 @@ composer require rkit/translation-behavior-yii2
 
 ## Configuration
 
-For example, we have a `Post` model and we want to add translation capability.
+For example, we have a `Post` model and we want to add translation capability.  
 Let's do it.
 
 1. Add a `post_translation` table and a `PostTranslation` model for the translation
@@ -91,15 +91,15 @@ $model->save();
 ```php
 $model = Post::find()->with('translation')->where(['id' => $id])->one();
 
-$model->title,
+echo $model->title;
 ```
 
 #### All translation
 ```php
 $model = Post::find()->with('translations')->where(['id' => $id])->one();
 
-$model->translate('en')->title;
-$model->translate('ru')->title;
+echo $model->translate('en')->title;
+echo $model->translate('ru')->title;
 ```
 
 ### Remove translation
