@@ -15,11 +15,100 @@ composer require rkit/translation-behavior-yii2
 
 ## Configuration
 
-@TODO
+For example, we have a `Post` model and we want to add translation capability.
+Let's do it.
+
+1. Add a `post_translation` table and a `PostTranslation` model for the translation
+
+```php
+$this->createTable('{{%post_translation}}', [
+    'id' => $this->primaryKey(),
+    'post_id' => $this->integer()->notNull()->defaultValue(0),
+    'language' => $this->string(2)->notNull()->defaultValue(''),
+    'title' => $this->string()->notNull()->defaultValue(''),
+]);
+```
+
+2. Add a `TranslationBehavior` behavior to the `Post` model
+
+```php
+public function behaviors()
+{
+    return [
+        'translationBehavior' => [
+            'class' => 'rkit\translation\behavior\TranslationBehavior',
+            'relationOne' => 'translation',
+            'relationMany' => 'translations',
+            'languageAttribute' => 'language',
+            'defaultLanguage' => 'en',
+            'attributes' => [ // attributes for translation
+                'title',
+            ],
+
+        ],
+    ];
+}
+```
+
+3. Add `translation` and `translations` relations (see `relationOne` and `relationMany` options in the behavior)
+
+```php
+/**
+ * @return \yii\db\ActiveQuery
+ */
+public function getTranslation()
+{
+    return $this
+        ->hasOne(PostTranslation::class, ['post_id' => 'id'])
+        ->andWhere(['language' => \Yii::$app->language]);
+}
+
+/**
+ * @return \yii\db\ActiveQuery
+ */
+public function getTranslations()
+{
+    return $this->hasMany(PostTranslation::class, ['post_id' => 'id']);
+}
+```
 
 ## Usage
 
-@TODO
+### Load translation
+
+```php
+$model = new Post();
+$model->loadTranslations([
+    'en' => ['title' => 'example'],
+    'ru' => ['title' => 'пример'],
+]);
+$model->save();
+```
+
+### Get translation
+
+#### For current language
+```php
+$model = Post::find()->with('translation')->where(['id' => $id])->one();
+
+$model->title,
+```
+
+#### All translation
+```php
+$model = Post::find()->with('translations')->where(['id' => $id])->one();
+
+$model->translate('en')->title;
+$model->translate('ru')->title;
+```
+
+### Remove translation
+
+```php
+$model = new Post();
+$model->loadTranslations([]);
+$model->save();
+```
 
 ## Tests
 
