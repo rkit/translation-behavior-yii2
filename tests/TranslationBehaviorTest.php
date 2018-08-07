@@ -41,10 +41,10 @@ class TranslationBehaviorTest extends TestCase
     public function testLoad()
     {
         $model = new Post();
-        $model->loadTranslations(['PostTranslation' => [
+        $model->loadTranslations([
             'en' => ['title' => 'example'],
             'ru' => ['title' => 'пример'],
-        ]]);
+        ]);
         $model->save();
 
         $this->assertCount(2, $model->translations);
@@ -57,30 +57,13 @@ class TranslationBehaviorTest extends TestCase
         $this->assertCount(2, $model->translations);
     }
 
-    public function testValidation()
-    {
-        $model = new Post();
-
-        $model->loadTranslations(['PostTranslation' => [
-            'en' => ['title' => 'example'],
-        ]]);
-        
-        $this->assertEquals($model->validateTranslations(), true);
-
-        $model->loadTranslations(['PostTranslation' => [
-            'en' => ['title' => 'example_1234567890'],
-        ]]);
-        
-        $this->assertEquals($model->validateTranslations(), false);
-    }
-
     public function testDefaultTranslation()
     {
         $model = new Post();
-        $model->loadTranslations(['PostTranslation' => [
+        $model->loadTranslations([
             'en' => ['title' => 'example'],
             'ru' => ['title' => 'пример'],
-        ]]);
+        ]);
         $model->save();
     
         Yii::$app->language = 'en';
@@ -101,22 +84,30 @@ class TranslationBehaviorTest extends TestCase
     public function testDelete()
     {
         $model = new Post();
-        $model->loadTranslations(['PostTranslation' => [
+        $model->loadTranslations([
             'en' => ['title' => 'example'],
             'ru' => ['title' => 'пример2'],
-        ]]);
+        ]);
         $model->save();
 
         $this->assertCount(2, $model->translations);
 
         $model = Post::find()->with('translations')->where(['id' => $model->id])->one();
-        $model->loadTranslations(['PostTranslation' => [
+        $model->loadTranslations([
             'en' => ['title' => 'example1'],
-        ]]);
+        ]);
         $model->save();
 
         $model = Post::find()->with('translations')->where(['id' => $model->id])->one();
 
         $this->assertCount(1, $model->translations);
+
+        $model = Post::find()->with('translations')->where(['id' => $model->id])->one();
+        $model->loadTranslations([]);
+        $model->save();
+
+        $model = Post::find()->with('translations')->where(['id' => $model->id])->one();
+
+        $this->assertCount(0, $model->translations);
     }
 }

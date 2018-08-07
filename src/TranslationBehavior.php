@@ -8,7 +8,7 @@
 
 namespace rkit\translation\behavior;
 
-use yii\base\{Model, Behavior, InvalidConfigException}; // phpcs:ignore
+use yii\base\{Behavior, InvalidConfigException}; // phpcs:ignore
 use yii\db\ActiveRecord;
 
 class TranslationBehavior extends Behavior
@@ -107,8 +107,7 @@ class TranslationBehavior extends Behavior
     {
         $this->owner->populateRelation($this->relationMany, []);
 
-        $reflection = new \ReflectionClass($this->owner->getRelation($this->relationMany)->modelClass);
-        foreach ($data[$reflection->getShortName()] as $language => $items) {
+        foreach ($data as $language => $items) {
             foreach ($items as $attribute => $translation) {
                 $this->owner->translate($language)->$attribute = $translation;
             }
@@ -116,12 +115,6 @@ class TranslationBehavior extends Behavior
 
         return true;
     }
-
-    public function validateTranslations()
-    {
-        return Model::validateMultiple($this->owner->{$this->relationMany});
-    }
-
 
     /**
      * Returns the translation model for the specified language.

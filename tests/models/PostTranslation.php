@@ -12,14 +12,6 @@ class PostTranslation extends \yii\db\ActiveRecord
         return '{{%post_translation}}';
     }
 
-    public function rules()
-    {
-        return [
-            [['title'], 'string', 'max' => 10],
-            [['title'], 'required'],
-        ];
-    }
-
     /**
      * @inheritdoc
      */
